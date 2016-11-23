@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>QGIS2leaf webmap</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+		<link rel="stylesheet" href="css/MarkerCluster.css" />
+		<link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+		<link rel="stylesheet" type="text/css" href="css/own_style.css">
+		<link rel="stylesheet" href="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.css" />	
+		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+		<script src="js/leaflet-hash.js"></script>
+		<script src="js/Autolinker.min.js"></script>
+		<script src="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.js"></script>
+		<script src="js/leaflet.markercluster.js"></script>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	</head>
+	<body>
+		<div id="map"></div>
+		<script src="data/exp_nachtcafes2015OGRGeoJSONPoint.js"></script>
+		<script>
+		var map = L.map('map', {
+			zoomControl:true, maxZoom:19
+		}).fitBounds([[47.3706486949,8.50799292635],[47.3844127729,8.54220377049]]);
+		var hash = new L.Hash(map);
+		var additional_attrib = 'created w. <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';
+		var feature_group = new L.featureGroup([]);
+		var raster_group = new L.LayerGroup([]);
+		var basemap_0 = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+			attribution: additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+		});	
+
+		var basemap_1 = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png', { 
+			attribution: additional_attrib + '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+		});
+
+		basemap_1.addTo(map);		
+		var basemap_2 = L.tileLayer('http://a.tile.stamen.com/toner/{z}/{x}/{y}.png', { 
+			attribution: additional_attrib + 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data: &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+		});	
+		var layerOrder=new Array();
+		function pop_nachtcafes2015OGRGeoJSONPoint(feature, layer) {					
+			var popupContent = '<table><tr><th scope="row">Jahr</th><td>' + Autolinker.link(String(feature.properties['Jahr'])) + '</td></tr><tr><th scope="row">Betriebsname</th><td>' + Autolinker.link(String(feature.properties['Betriebsname'])) + '</td></tr><tr><th scope="row">StrasseLang</th><td>' + Autolinker.link(String(feature.properties['StrasseLang'])) + '</td></tr><tr><th scope="row">HNr</th><td>' + Autolinker.link(String(feature.properties['HNr'])) + '</td></tr><tr><th scope="row">PLZ</th><td>' + Autolinker.link(String(feature.properties['PLZ'])) + '</td></tr><tr><th scope="row">Ort</th><td>' + Autolinker.link(String(feature.properties['Ort'])) + '</td></tr><tr><th scope="row">StatZoneSort</th><td>' + Autolinker.link(String(feature.properties['StatZoneSort'])) + '</td></tr><tr><th scope="row">StatZoneLang</th><td>' + Autolinker.link(String(feature.properties['StatZoneLang'])) + '</td></tr><tr><th scope="row">QuarSort</th><td>' + Autolinker.link(String(feature.properties['QuarSort'])) + '</td></tr><tr><th scope="row">QuarLang</th><td>' + Autolinker.link(String(feature.properties['QuarLang'])) + '</td></tr><tr><th scope="row">KreisSort</th><td>' + Autolinker.link(String(feature.properties['KreisSort'])) + '</td></tr><tr><th scope="row">KreisLang</th><td>' + Autolinker.link(String(feature.properties['KreisLang'])) + '</td></tr><tr><th scope="row">Oeffnungszeit</th><td>' + Autolinker.link(String(feature.properties['Oeffnungszeit'])) + '</td></tr><tr><th scope="row">Betriebsart</th><td>' + Autolinker.link(String(feature.properties['Betriebsart'])) + '</td></tr><tr><th scope="row">Betriebsstatus</th><td>' + Autolinker.link(String(feature.properties['Betriebsstatus'])) + '</td></tr><tr><th scope="row">XKoord</th><td>' + Autolinker.link(String(feature.properties['XKoord'])) + '</td></tr><tr><th scope="row">YKoord</th><td>' + Autolinker.link(String(feature.properties['YKoord'])) + '</td></tr><tr><th scope="row">AnzBetriebe</th><td>' + Autolinker.link(String(feature.properties['AnzBetriebe'])) + '</td></tr><tr><th scope="row">AnzNachtcafe</th><td>' + Autolinker.link(String(feature.properties['AnzNachtcafe'])) + '</td></tr></table>';
+			layer.bindPopup(popupContent);
+		}
+
+		var exp_nachtcafes2015OGRGeoJSONPointJSON = new L.geoJson(exp_nachtcafes2015OGRGeoJSONPoint,{
+			onEachFeature: pop_nachtcafes2015OGRGeoJSONPoint,
+			pointToLayer: function (feature, latlng) {  
+				return L.circleMarker(latlng, {
+					radius: 4.0,
+					fillColor: '#0cc38c',
+					color: '#000000',
+					weight: 1,
+					opacity: 1.0,
+					fillOpacity: 1.0
+				})
+			}
+		});
+		var cluster_groupnachtcafes2015OGRGeoJSONPointJSON= new L.MarkerClusterGroup({showCoverageOnHover: false});
+		cluster_groupnachtcafes2015OGRGeoJSONPointJSON.addLayer(exp_nachtcafes2015OGRGeoJSONPointJSON);
+		//add comment sign to hide this layer on the map in the initial view.
+		cluster_groupnachtcafes2015OGRGeoJSONPointJSON.addTo(map);
+
+		feature_group.addTo(map);
+		var title = new L.Control();
+		title.onAdd = function (map) {
+			this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+			this.update();
+			return this._div;
+		};
+		title.update = function () {
+			this._div.innerHTML = '<h2>Nachtcafés 2015</h2>in der Stadt Zürich.'
+		};
+		title.addTo(map);
+		var osmGeocoder = new L.Control.OSMGeocoder({
+            collapsed: false,
+            position: 'topright',
+            text: 'Find!',
+		});
+		osmGeocoder.addTo(map);
+		var legend = L.control({position: 'bottomright'});
+		legend.onAdd = function (map) {
+			var div = L.DomUtil.create('div', 'info legend');
+			div.innerHTML = "<h3>Legend</h3><table></table>";
+    		return div;
+		};
+		legend.addTo(map);
+	var baseMaps = {
+		'OSM Standard': basemap_0,
+		'OSM Black & White': basemap_1,
+		'Stamen Toner': basemap_2};
+		L.control.layers(baseMaps,{"nachtcafes2015OGRGeoJSONPoint": cluster_groupnachtcafes2015OGRGeoJSONPointJSON},{collapsed:false}).addTo(map);
+		L.control.scale({options: {position: 'bottomleft',maxWidth: 100,metric: true,imperial: false,updateWhenIdle: false}}).addTo(map);
+	</script>
+</body>
+</html>
